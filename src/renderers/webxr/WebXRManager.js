@@ -178,6 +178,9 @@ class WebXRManager extends EventDispatcher {
 
 			//
 
+			renderer.setPixelRatio( currentPixelRatio );
+			renderer.setSize( currentSize.width, currentSize.height, false );
+
 			animation.stop();
 
 			scope.isPresenting = false;
@@ -234,6 +237,12 @@ class WebXRManager extends EventDispatcher {
 		this.getBinding = function () {
 
 			return glBinding;
+
+		};
+
+		this._getRenderTarget = function () {
+
+			return newRenderTarget;
 
 		};
 
@@ -357,6 +366,9 @@ class WebXRManager extends EventDispatcher {
 
 				customReferenceSpace = null;
 				referenceSpace = await session.requestReferenceSpace( referenceSpaceType );
+
+				currentPixelRatio = renderer.getPixelRatio();
+				renderer.getSize( currentSize );
 
 				animation.setContext( session );
 				animation.start();

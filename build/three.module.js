@@ -12754,6 +12754,9 @@ class WebXRManager extends EventDispatcher {
 
 			//
 
+			renderer.setPixelRatio( currentPixelRatio );
+			renderer.setSize( currentSize.width, currentSize.height, false );
+
 			animation.stop();
 
 			scope.isPresenting = false;
@@ -12810,6 +12813,12 @@ class WebXRManager extends EventDispatcher {
 		this.getBinding = function () {
 
 			return glBinding;
+
+		};
+
+		this._getRenderTarget = function () {
+
+			return newRenderTarget;
 
 		};
 
@@ -12933,6 +12942,9 @@ class WebXRManager extends EventDispatcher {
 
 				customReferenceSpace = null;
 				referenceSpace = await session.requestReferenceSpace( referenceSpaceType );
+
+				currentPixelRatio = renderer.getPixelRatio();
+				renderer.getSize( currentSize );
 
 				animation.setContext( session );
 				animation.start();
@@ -16612,6 +16624,13 @@ class WebGLRenderer {
 
 		const _scratchFrameBuffer = _gl.createFramebuffer();
 		this.setRenderTarget = function ( renderTarget, activeCubeFace = 0, activeMipmapLevel = 0 ) {
+
+			// Render to base layer instead of canvas in WebXR
+			if ( renderTarget === null && this.xr.isPresenting ) {
+
+				renderTarget = this.xr._getRenderTarget();
+
+			}
 
 			_currentRenderTarget = renderTarget;
 			_currentActiveCubeFace = activeCubeFace;
